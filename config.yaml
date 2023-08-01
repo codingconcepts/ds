@@ -1,0 +1,25 @@
+source:
+  driver: pgx
+  url: postgres://postgres:password@localhost:5432/postgres?sslmode=disable
+  tables:
+    - name: example
+      read_limit: 2
+      columns:
+        - name: col_id
+        - name: col_string
+        - name: col_int
+        - name: col_decimal
+        - name: col_date
+        - name: col_timestamp
+
+target:
+  url: postgres://root@localhost:26257/defaultdb?sslmode=disable
+  tables:
+    - name: example
+      columns:
+        - name: col_id
+        - name: col_string
+        - name: col_int
+        - name: col_decimal
+        - name: col_date
+        - name: col_timestamp
