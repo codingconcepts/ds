@@ -43,29 +43,34 @@ func main() {
 		log.Fatalf("error ensuring state table: %v", err)
 	}
 
-	for _, table := range c.Source.Tables {
-		if err = shiftTable(sourceDB, targetDB, table); err != nil {
-			log.Fatalf("error shifting table: %s: %v", table.Name, err)
+	for _, sourceTable := range c.Source.Tables {
+		targetTable, err := c.Target.getTargetTable(sourceTable.SourceName)
+		if err != nil {
+			log.Fatalf("error getting target table: %v", err)
+		}
+
+		if err = shiftTable(sourceDB, targetDB, sourceTable, targetTable); err != nil {
+			log.Fatalf("error shifting %s -> %s: %v", sourceTable.Name, targetTable.Name, err)
 		}
 	}
 }
 
-func shiftTable(sourceDB *sql.DB, targetDB *pgxpool.Pool, t table) error {
+func shiftTable(sourceDB *sql.DB, targetDB *pgxpool.Pool, sourceTable, targetTable table) error {
 	for {
 		// Fetch current offset.
-		offset, err := getShiftState(targetDB, t.Name)
+		offset, err := getShiftState(targetDB, sourceTable.Name)
 		if err != nil {
 			return fmt.Errorf("fetching current offset: %w", err)
 		}
 
 		// Read from input.
-		stmt := t.selectStatement(offset)
+		stmt := sourceTable.selectStatement(offset)
 		rows, err := sourceDB.Query(stmt)
 		if err != nil {
 			return fmt.Errorf("querying rows: %w", err)
 		}
 
-		values, err := scan(rows, t)
+		values, err := scan(rows, sourceTable)
 		if err != nil {
 			return fmt.Errorf("scanning rows: %w", err)
 		}
@@ -75,17 +80,17 @@ func shiftTable(sourceDB *sql.DB, targetDB *pgxpool.Pool, t table) error {
 		}
 
 		// Write to output.
-		if _, err = targetDB.CopyFrom(context.Background(), pgx.Identifier{t.Name}, t.columnNames(), pgx.CopyFromRows(values)); err != nil {
+		if _, err = targetDB.CopyFrom(context.Background(), pgx.Identifier{sourceTable.Name}, targetTable.columnNames(), pgx.CopyFromRows(values)); err != nil {
 			return fmt.Errorf("inserting rows: %w", err)
 		}
 
 		// Set current offset.
-		if err = setShiftState(targetDB, t.Name, offset+len(values)); err != nil {
+		if err = setShiftState(targetDB, sourceTable.Name, offset+len(values)); err != nil {
 			return fmt.Errorf("setting current offset: %w", err)
 		}
 
 		// Exit loop if we've read less than the read_limit.
-		if len(values) < t.ReadLimit {
+		if len(values) < sourceTable.ReadLimit {
 			return nil
 		}
 	}
@@ -192,10 +197,23 @@ type database struct {
 	Tables []table `yaml:"tables"`
 }
 
+func (d database) getTargetTable(source string) (table, error) {
+	targetTable, ok := lo.Find(d.Tables, func(t table) bool {
+		return t.SourceName == source || t.Name == source
+	})
+
+	if !ok {
+		return table{}, fmt.Errorf("missing target for %s; ensure table names match, target has a source_name", source)
+	}
+
+	return targetTable, nil
+}
+
 type table struct {
-	Name      string   `yaml:"name"`
-	ReadLimit int      `yaml:"read_limit"`
-	Columns   []column `yaml:"columns"`
+	Name       string   `yaml:"name"`
+	SourceName string   `yaml:"source_name"`
+	ReadLimit  int      `yaml:"read_limit"`
+	Columns    []column `yaml:"columns"`
 }
 
 func (t table) selectStatement(offset int) string {
