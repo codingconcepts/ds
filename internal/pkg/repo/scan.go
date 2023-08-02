@@ -6,7 +6,7 @@ import (
 	"shift/internal/pkg/model"
 )
 
-// Scan a row collection for a given table into a multi-dimensional array.
+// scan a row collection for a given table into a multi-dimensional array.
 func scan(list *sql.Rows, t model.Table) ([][]any, error) {
 	fields, err := list.Columns()
 	if err != nil {

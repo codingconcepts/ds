@@ -33,7 +33,7 @@ func EnsureStateTable(targetDB *pgxpool.Pool, d model.Database) error {
 	return nil
 }
 
-// GetShiftState returns the current_offset for a given table.
+// getShiftState returns the current_offset for a given table.
 func getShiftState(targetDB *pgxpool.Pool, table string) (int, error) {
 	const stmt = `SELECT current_offset FROM _shift_state WHERE table_name = $1`
 
@@ -47,7 +47,7 @@ func getShiftState(targetDB *pgxpool.Pool, table string) (int, error) {
 	return offset, nil
 }
 
-// SetShiftState sets the current_offset for a given table.
+// setShiftState sets the current_offset for a given table.
 func setShiftState(targetDB *pgxpool.Pool, table string, offset int) error {
 	const stmt = `UPDATE _shift_state SET current_offset = $1 WHERE table_name = $2`
 

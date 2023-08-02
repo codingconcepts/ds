@@ -9,7 +9,9 @@ import (
 
 // Table represents tables in the source and target databases.
 type Table struct {
-	Name       string   `yaml:"name"`
+	Name string `yaml:"name"`
+
+	// SourceName informs shift the origin table name, if target is different.
 	SourceName string   `yaml:"source_name"`
 	ReadLimit  int      `yaml:"read_limit"`
 	Columns    []Column `yaml:"columns"`
