@@ -1,4 +1,4 @@
-module scratch
+module shift
 
 go 1.20
 
