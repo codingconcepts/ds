@@ -1,0 +1,20 @@
+source:
+  driver: pgx
+  url: postgres://postgres:password@localhost:5432/postgres?sslmode=disable
+  tables:
+    - name: person
+      read_limit: 2
+      read_delay: 10s
+      columns:
+        - name: id
+        - name: full_name
+        - name: date_of_birth
+
+target:
+  url: postgres://root@localhost:26257/defaultdb?sslmode=disable
+  tables:
+    - name: person
+      columns:
+        - name: id
+        - name: full_name
+        - name: date_of_birth

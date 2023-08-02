@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"flag"
 	"log"
 	"os"
 	"shift/internal/pkg/model"
@@ -15,7 +16,15 @@ import (
 )
 
 func main() {
-	f, err := os.Open("config.yaml")
+	configPath := flag.String("c", "", "absolute or relative path to the config file")
+	flag.Parse()
+
+	if *configPath == "" {
+		flag.Usage()
+		os.Exit(2)
+	}
+
+	f, err := os.Open(*configPath)
 	if err != nil {
 		log.Fatalf("error opening config file: %v", err)
 	}

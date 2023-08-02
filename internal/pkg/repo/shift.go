@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"shift/internal/pkg/model"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -48,6 +49,10 @@ func ShiftTable(sourceDB *sql.DB, targetDB *pgxpool.Pool, sourceTable, targetTab
 		// Exit loop if we've read less than the read_limit.
 		if len(values) < sourceTable.ReadLimit {
 			return nil
+		}
+
+		if sourceTable.ReadDelay > 0 {
+			time.Sleep(sourceTable.ReadDelay)
 		}
 	}
 }

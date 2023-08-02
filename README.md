@@ -14,7 +14,7 @@ Shift data between databases
 * Create a hidden `_shift_digest` column and populate it with the digest of the row at time of insert:
 
 ``` sql
-SELECT sha256(CAST((e.*) AS TEXT)) FROM example e;
+SELECT sha256(e::TEXT) FROM example e;
 
 ALTER TABLE example
   ADD COLUMN _shift_digest STRING
@@ -23,5 +23,5 @@ ALTER TABLE example
 ```
 
 * Add the following cobra commands:
-  * **insert** - bulk upload existing table data
   * **update** - bulk upload changed table data
+  * **delete** - bulk upload deleted table data
