@@ -2,8 +2,7 @@ source:
   driver: pgx
   url: postgres://postgres:password@localhost:5432/postgres?sslmode=disable
   tables:
-    - name: person
-      read_limit: 2
+    - name: person#
       read_delay: 10s
       columns:
         - name: id

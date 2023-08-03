@@ -22,6 +22,22 @@ Usage of dshift:
         display the current version number
 ```
 
+### Example
+
+Create source database:
+``` sh
+make postgres
+make postgres_create
+make postgres_insert
+make postgres_wal_level
+```
+
+Create target database:
+``` sh
+make cockroach
+make cockroach_create
+```
+
 ### Workflow
 
 * Read config file

@@ -13,6 +13,12 @@ postgres:
 postgres_create:
 	PGPASSWORD=password psql -h localhost -p 5432 -d postgres -U postgres -f examples/basic/create.sql
 
+postgres_insert:
+	PGPASSWORD=password psql -h localhost -p 5432 -d postgres -U postgres -f examples/basic/insert.sql
+
+postgres_wal_level:
+	PGPASSWORD=password psql -h localhost -U postgres -c 'ALTER SYSTEM SET wal_level = logical;'
+
 postgres_shell:
 	PGPASSWORD=password psql -h localhost -p 5432 -d postgres -U postgres
 
@@ -32,7 +38,12 @@ cockroach_shell:
 	cockroach sql --url "postgres://root@localhost:26257/defaultdb?sslmode=disable"
 
 dshift:
-	go run dshift.go -c examples/basic/config.yaml
+	go run dshift.go insert --config examples/basic/config.yaml
+
+verify:
+	molt verify \
+		--source 'postgres://postgres:password@localhost:5432/postgres?sslmode=disable' \
+		--target 'postgresql://root@localhost:26257/defaultdb?sslmode=disable'
 
 release: validate_version
 	GOOS=linux go build -ldflags "-X main.version=${VERSION}" -o dshift ;\

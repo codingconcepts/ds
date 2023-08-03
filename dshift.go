@@ -5,36 +5,61 @@ import (
 	"database/sql"
 	"dshift/internal/pkg/model"
 	"dshift/internal/pkg/repo"
-	"flag"
 	"log"
 	"os"
 
+	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-var version string
+var (
+	version    string
+	configPath string
+)
 
 func main() {
 	log.SetFlags(0)
 
-	configPath := flag.String("c", "", "absolute or relative path to the config file")
-	versionFlag := flag.Bool("version", false, "display the current version number")
-	flag.Parse()
-
-	if *versionFlag {
-		log.Println(version)
-		return
+	rootCmd := &cobra.Command{
+		Use:   "dshift",
+		Short: "Shift data from one from database to another",
 	}
+	rootCmd.PersistentFlags().StringVarP(&configPath, "config", "c", "", "absolute or relative path to the config file")
+	rootCmd.MarkPersistentFlagRequired("config")
 
-	if *configPath == "" {
-		flag.Usage()
-		os.Exit(2)
+	rootCmd.AddCommand(
+		&cobra.Command{
+			Use:   "version",
+			Short: "Print dshift version information",
+			Run:   runVersion,
+		},
+		&cobra.Command{
+			Use:   "insert",
+			Short: "Insert data from one database into another",
+			Run:   runInsert,
+		},
+		&cobra.Command{
+			Use:   "update",
+			Short: "Bring the target database up-to-date with the source database",
+			Run:   runUpdate,
+		},
+	)
+
+	if err := rootCmd.Execute(); err != nil {
+		log.Fatal(err)
 	}
+}
 
-	f, err := os.Open(*configPath)
+func runVersion(cmd *cobra.Command, args []string) {
+	log.Println(version)
+}
+
+func runInsert(cmd *cobra.Command, args []string) {
+	log.Println("hi", configPath)
+	f, err := os.Open(configPath)
 	if err != nil {
 		log.Fatalf("error opening config file: %v", err)
 	}
@@ -70,4 +95,8 @@ func main() {
 			log.Fatalf("error shifting %s -> %s: %v", sourceTable.Name, targetTable.Name, err)
 		}
 	}
+}
+
+func runUpdate(cmd *cobra.Command, args []string) {
+
 }
