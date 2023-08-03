@@ -1,3 +1,8 @@
+validate_version:
+ifndef VERSION
+	$(error VERSION is undefined)
+endif
+
 postgres:
 	docker run -d \
 		--name postgres \
@@ -28,6 +33,21 @@ cockroach_shell:
 
 shift:
 	go run shift.go -c examples/basic/config.yaml
+
+release: validate_version
+	# linux
+	GOOS=linux go build -ldflags "-X main.version=${VERSION}" -o shift ;\
+	tar -zcvf ./releases/shift_${VERSION}_linux.tar.gz ./shift ;\
+
+	# macos
+	GOOS=darwin go build -ldflags "-X main.version=${VERSION}" -o shift ;\
+	tar -zcvf ./releases/shift_${VERSION}_macOS.tar.gz ./shift ;\
+
+	# windows
+	GOOS=windows go build -ldflags "-X main.version=${VERSION}" -o shift ;\
+	tar -zcvf ./releases/shift_${VERSION}_windows.tar.gz ./shift ;\
+
+	rm ./shift
 
 clean:
 	docker ps -aq | xargs docker rm -f

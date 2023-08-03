@@ -15,9 +15,19 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
+var version string
+
 func main() {
+	log.SetFlags(0)
+
 	configPath := flag.String("c", "", "absolute or relative path to the config file")
+	versionFlag := flag.Bool("version", false, "display the current version number")
 	flag.Parse()
+
+	if *versionFlag {
+		log.Println(version)
+		return
+	}
 
 	if *configPath == "" {
 		flag.Usage()
