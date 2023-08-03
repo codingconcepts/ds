@@ -51,6 +51,16 @@ make cockroach
 make cockroach_create
 ```
 
+Shift
+```sh
+make dshift
+```
+
+Verify
+``` sh
+make verify
+```
+
 ### Workflow
 
 * Read config file
