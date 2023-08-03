@@ -35,15 +35,12 @@ dshift:
 	go run dshift.go -c examples/basic/config.yaml
 
 release: validate_version
-	# linux
 	GOOS=linux go build -ldflags "-X main.version=${VERSION}" -o dshift ;\
 	tar -zcvf ./releases/dshift_${VERSION}_linux.tar.gz ./dshift ;\
 
-	# macos
 	GOOS=darwin go build -ldflags "-X main.version=${VERSION}" -o dshift ;\
 	tar -zcvf ./releases/dshift_${VERSION}_macOS.tar.gz ./dshift ;\
 
-	# windows
 	GOOS=windows go build -ldflags "-X main.version=${VERSION}" -o dshift ;\
 	tar -zcvf ./releases/dshift_${VERSION}_windows.tar.gz ./dshift ;\
 
