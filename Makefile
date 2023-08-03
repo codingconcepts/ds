@@ -31,23 +31,23 @@ cockroach_create:
 cockroach_shell:
 	cockroach sql --url "postgres://root@localhost:26257/defaultdb?sslmode=disable"
 
-shift:
-	go run shift.go -c examples/basic/config.yaml
+dshift:
+	go run dshift.go -c examples/basic/config.yaml
 
 release: validate_version
 	# linux
-	GOOS=linux go build -ldflags "-X main.version=${VERSION}" -o shift ;\
-	tar -zcvf ./releases/shift_${VERSION}_linux.tar.gz ./shift ;\
+	GOOS=linux go build -ldflags "-X main.version=${VERSION}" -o dshift ;\
+	tar -zcvf ./releases/dshift_${VERSION}_linux.tar.gz ./dshift ;\
 
 	# macos
-	GOOS=darwin go build -ldflags "-X main.version=${VERSION}" -o shift ;\
-	tar -zcvf ./releases/shift_${VERSION}_macOS.tar.gz ./shift ;\
+	GOOS=darwin go build -ldflags "-X main.version=${VERSION}" -o dshift ;\
+	tar -zcvf ./releases/dshift_${VERSION}_macOS.tar.gz ./dshift ;\
 
 	# windows
-	GOOS=windows go build -ldflags "-X main.version=${VERSION}" -o shift ;\
-	tar -zcvf ./releases/shift_${VERSION}_windows.tar.gz ./shift ;\
+	GOOS=windows go build -ldflags "-X main.version=${VERSION}" -o dshift ;\
+	tar -zcvf ./releases/dshift_${VERSION}_windows.tar.gz ./dshift ;\
 
-	rm ./shift
+	rm ./dshift
 
 clean:
 	docker ps -aq | xargs docker rm -f

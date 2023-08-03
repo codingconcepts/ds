@@ -1,4 +1,4 @@
-# shift
+# dshift
 Shift data between databases
 
 ### Installation
@@ -8,7 +8,7 @@ Find the release that matches your architecture on the [releases](https://github
 Download the tar, extract the executable, and move it into your PATH:
 
 ```
-$ tar -xvf shift_[VERSION]_macOS.tar.gz
+$ tar -xvf dshift_[VERSION]_macOS.tar.gz
 ```
 
 

@@ -3,11 +3,11 @@ package main
 import (
 	"context"
 	"database/sql"
+	"dshift/internal/pkg/model"
+	"dshift/internal/pkg/repo"
 	"flag"
 	"log"
 	"os"
-	"shift/internal/pkg/model"
-	"shift/internal/pkg/repo"
 
 	"gopkg.in/yaml.v3"
 

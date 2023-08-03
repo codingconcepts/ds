@@ -2,8 +2,8 @@ package repo
 
 import (
 	"database/sql"
+	"dshift/internal/pkg/model"
 	"fmt"
-	"shift/internal/pkg/model"
 )
 
 // scan a row collection for a given table into a multi-dimensional array.

@@ -3,8 +3,8 @@ package repo
 import (
 	"context"
 	"database/sql"
+	"dshift/internal/pkg/model"
 	"fmt"
-	"shift/internal/pkg/model"
 	"time"
 
 	"github.com/jackc/pgx/v5"

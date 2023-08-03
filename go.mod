@@ -1,4 +1,4 @@
-module shift
+module dshift
 
 go 1.20
 

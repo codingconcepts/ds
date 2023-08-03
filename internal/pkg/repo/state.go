@@ -2,8 +2,8 @@ package repo
 
 import (
 	"context"
+	"dshift/internal/pkg/model"
 	"fmt"
-	"shift/internal/pkg/model"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
