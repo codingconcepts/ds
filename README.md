@@ -74,6 +74,4 @@ ALTER TABLE example
   NOT VISIBLE;
 ```
 
-* Add the following cobra commands:
-  * **update** - bulk upload changed table data
-  * **delete** - bulk upload deleted table data
+* Implement update command:
