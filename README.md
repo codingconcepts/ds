@@ -11,6 +11,16 @@ Download the tar, extract the executable, and move it into your PATH:
 $ tar -xvf dshift_[VERSION]_macOS.tar.gz
 ```
 
+### Usage
+
+```
+$ dshift --
+Usage of dshift:
+  -c string
+        absolute or relative path to the config file
+  -version
+        display the current version number
+```
 
 ### Workflow
 
