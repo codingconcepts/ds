@@ -14,12 +14,25 @@ $ tar -xvf dshift_[VERSION]_macOS.tar.gz
 ### Usage
 
 ```
-$ dshift --
-Usage of dshift:
-  -c string
-        absolute or relative path to the config file
-  -version
-        display the current version number
+$ dshift
+
+Shift data from one from database to another
+
+Usage:
+  dshift [command]
+
+Available Commands:
+  completion  Generate the autocompletion script for the specified shell
+  help        Help about any command
+  insert      Insert data from one database into another
+  update      Bring the target database up-to-date with the source database
+  version     Print dshift version information
+
+Flags:
+  -c, --config string   absolute or relative path to the config file
+  -h, --help            help for dshift
+
+Use "dshift [command] --help" for more information about a command.
 ```
 
 ### Example
