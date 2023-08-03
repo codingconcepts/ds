@@ -15,6 +15,10 @@ type Table struct {
 	// SourceName informs shift the origin table name, if target is different.
 	SourceName string `yaml:"source_name"`
 
+	// Filter informs shift that the origin table should be read from a particular point,
+	// rather than in its entirety.
+	Filter string `yaml:"filter"`
+
 	// ReadLimit limits the number of rows to read from the source at any time.
 	ReadLimit int `yaml:"read_limit"`
 
@@ -28,9 +32,10 @@ func (t Table) SelectStatement(offset int) string {
 	columns := t.ColumnNames()
 
 	return fmt.Sprintf(
-		"SELECT %s FROM %s LIMIT %d OFFSET %d",
+		"SELECT %s FROM %s %s LIMIT %d OFFSET %d",
 		strings.Join(columns, ", "),
 		t.Name,
+		t.Filter,
 		t.ReadLimit,
 		offset,
 	)
