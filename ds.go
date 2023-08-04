@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"database/sql"
-	"dshift/internal/pkg/model"
-	"dshift/internal/pkg/repo"
+	"ds/internal/pkg/model"
+	"ds/internal/pkg/repo"
 	"log"
 	"os"
 

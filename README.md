@@ -1,4 +1,4 @@
-# dshift
+# ds
 Shift data between databases
 
 ### Installation
@@ -8,31 +8,31 @@ Find the release that matches your architecture on the [releases](https://github
 Download the tar, extract the executable, and move it into your PATH:
 
 ```
-$ tar -xvf dshift_[VERSION]_macOS.tar.gz
+$ tar -xvf ds_[VERSION]_macOS.tar.gz
 ```
 
 ### Usage
 
 ```
-$ dshift
+$ ds
 
 Shift data from one from database to another
 
 Usage:
-  dshift [command]
+  ds [command]
 
 Available Commands:
   completion  Generate the autocompletion script for the specified shell
   help        Help about any command
   insert      Insert data from one database into another
   update      Bring the target database up-to-date with the source database
-  version     Print dshift version information
+  version     Print ds version information
 
 Flags:
   -c, --config string   absolute or relative path to the config file
-  -h, --help            help for dshift
+  -h, --help            help for ds
 
-Use "dshift [command] --help" for more information about a command.
+Use "ds [command] --help" for more information about a command.
 ```
 
 ### Example
@@ -50,32 +50,32 @@ make cockroach
 make cockroach_create
 ```
 
-Bulk insert all rows from the source database:
-```sh
-dshift insert --config examples/basic/config.yaml
-```
-
-Verify
+Show that data is currently out-of-sync:
 ``` sh
 make verify
 ```
 
-Bulk update all rows to capture future changes:
+Bulk insert all rows from the source database and re-run verify:
 ```sh
-dshift update --config examples/basic/config.yaml
+ds insert --config examples/basic/config.yaml
+
+make verify
 ```
 
-### Todo
+Update data in the source database and re-run verify:
+``` sh
+make postgres_update
 
-* Create a hidden `_shift_digest` column and populate it with the digest of the row at time of insert:
-
-``` sql
-SELECT sha256(e::TEXT) FROM example e;
-
-ALTER TABLE example
-  ADD COLUMN _shift_digest STRING
-  CREATE IF NOT EXISTS FAMILY _shift
-  NOT VISIBLE;
+make verify
 ```
 
-* Implement update command:
+Bulk update all rows and re-run verify:
+```sh
+ds update --config examples/basic/config.yaml
+
+make verify
+```
+
+### Todos
+
+* Implement `delete` command to clear up missing rows

@@ -1,7 +1,7 @@
 package model
 
 import (
-	"dshift/internal/pkg/io"
+	"ds/internal/pkg/io"
 	"fmt"
 	"strings"
 	"time"

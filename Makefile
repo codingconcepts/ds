@@ -16,8 +16,8 @@ postgres_create:
 postgres_insert:
 	PGPASSWORD=password psql -h localhost -p 5432 -d postgres -U postgres -f examples/basic/insert.sql
 
-postgres_wal_level:
-	PGPASSWORD=password psql -h localhost -U postgres -c 'ALTER SYSTEM SET wal_level = logical;'
+postgres_update:
+	PGPASSWORD=password psql -h localhost -U postgres -c 'UPDATE person SET full_name = upper(full_name)'
 
 postgres_shell:
 	PGPASSWORD=password psql -h localhost -p 5432 -d postgres -U postgres
@@ -38,7 +38,7 @@ cockroach_shell:
 	cockroach sql --url "postgres://root@localhost:26257/defaultdb?sslmode=disable"
 
 dshift:
-	go run dshift.go insert --config examples/basic/config.yaml
+	go run ds.go insert --config examples/basic/config.yaml
 
 verify:
 	molt verify \
@@ -47,15 +47,15 @@ verify:
 
 release: validate_version
 	GOOS=linux go build -ldflags "-X main.version=${VERSION}" -o dshift ;\
-	tar -zcvf ./releases/dshift_${VERSION}_linux.tar.gz ./dshift ;\
+	tar -zcvf ./releases/ds_${VERSION}_linux.tar.gz ./ds ;\
 
-	GOOS=darwin go build -ldflags "-X main.version=${VERSION}" -o dshift ;\
-	tar -zcvf ./releases/dshift_${VERSION}_macOS.tar.gz ./dshift ;\
+	GOOS=darwin go build -ldflags "-X main.version=${VERSION}" -o ds ;\
+	tar -zcvf ./releases/ds_${VERSION}_macOS.tar.gz ./ds ;\
 
-	GOOS=windows go build -ldflags "-X main.version=${VERSION}" -o dshift ;\
-	tar -zcvf ./releases/dshift_${VERSION}_windows.tar.gz ./dshift ;\
+	GOOS=windows go build -ldflags "-X main.version=${VERSION}" -o ds ;\
+	tar -zcvf ./releases/ds_${VERSION}_windows.tar.gz ./ds ;\
 
-	rm ./dshift
+	rm ./ds
 
 clean:
 	docker ps -aq | xargs docker rm -f

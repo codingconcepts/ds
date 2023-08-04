@@ -2,7 +2,7 @@ package repo
 
 import (
 	"database/sql"
-	"dshift/internal/pkg/model"
+	"ds/internal/pkg/model"
 	"fmt"
 )
 
