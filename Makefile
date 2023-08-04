@@ -46,7 +46,7 @@ verify:
 		--target 'postgresql://root@localhost:26257/defaultdb?sslmode=disable'
 
 release: validate_version
-	GOOS=linux go build -ldflags "-X main.version=${VERSION}" -o dshift ;\
+	GOOS=linux go build -ldflags "-X main.version=${VERSION}" -o ds ;\
 	tar -zcvf ./releases/ds_${VERSION}_linux.tar.gz ./ds ;\
 
 	GOOS=darwin go build -ldflags "-X main.version=${VERSION}" -o ds ;\
