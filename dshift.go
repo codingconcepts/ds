@@ -28,7 +28,6 @@ func main() {
 		Short: "Shift data from one from database to another",
 	}
 	rootCmd.PersistentFlags().StringVarP(&configPath, "config", "c", "", "absolute or relative path to the config file")
-	rootCmd.MarkPersistentFlagRequired("config")
 
 	rootCmd.AddCommand(
 		&cobra.Command{
@@ -58,6 +57,10 @@ func runVersion(cmd *cobra.Command, args []string) {
 }
 
 func runInsert(cmd *cobra.Command, args []string) {
+	if configPath == "" {
+		log.Fatalf("missing config argument")
+	}
+
 	config := loadConfig()
 
 	sourceDB, err := sql.Open(config.Source.Driver, config.Source.URL)
@@ -89,6 +92,10 @@ func runInsert(cmd *cobra.Command, args []string) {
 }
 
 func runUpdate(cmd *cobra.Command, args []string) {
+	if configPath == "" {
+		log.Fatalf("missing config argument")
+	}
+
 	config := loadConfig()
 
 	sourceDB, err := sql.Open(config.Source.Driver, config.Source.URL)
