@@ -7,7 +7,7 @@ import (
 )
 
 // scan a row collection for a given table into a multi-dimensional array.
-func scan(list *sql.Rows, t model.Table) ([][]any, error) {
+func scan(list *sql.Rows, t model.Table) (model.Values, error) {
 	fields, err := list.Columns()
 	if err != nil {
 		return nil, fmt.Errorf("listing columns: %w", err)
@@ -37,16 +37,16 @@ func scan(list *sql.Rows, t model.Table) ([][]any, error) {
 	return mapToNArray(rows, t), nil
 }
 
-func mapToNArray(m []map[string]any, t model.Table) [][]any {
-	array := [][]any{}
+func mapToNArray(m []map[string]any, t model.Table) model.Values {
+	values := model.Values{}
 
 	for _, row := range m {
 		columns := make([]any, len(t.Columns))
 		for i, col := range t.Columns {
 			columns[i] = row[col.Name]
 		}
-		array = append(array, columns)
+		values = append(values, columns)
 	}
 
-	return array
+	return values
 }

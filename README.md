@@ -42,7 +42,6 @@ Create source database:
 make postgres
 make postgres_create
 make postgres_insert
-make postgres_wal_level
 ```
 
 Create target database:
@@ -51,14 +50,19 @@ make cockroach
 make cockroach_create
 ```
 
-Shift
+Bulk insert all rows from the source database:
 ```sh
-make dshift
+dshift insert --config examples/basic/config.yaml
 ```
 
 Verify
 ``` sh
 make verify
+```
+
+Bulk update all rows to capture future changes:
+```sh
+dshift update --config examples/basic/config.yaml
 ```
 
 ### Todo

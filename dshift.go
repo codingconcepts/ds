@@ -58,7 +58,68 @@ func runVersion(cmd *cobra.Command, args []string) {
 }
 
 func runInsert(cmd *cobra.Command, args []string) {
-	log.Println("hi", configPath)
+	config := loadConfig()
+
+	sourceDB, err := sql.Open(config.Source.Driver, config.Source.URL)
+	if err != nil {
+		log.Fatalf("error connecting to source database: %v", err)
+	}
+	defer sourceDB.Close()
+
+	targetDB, err := pgxpool.New(context.Background(), config.Target.URL)
+	if err != nil {
+		log.Fatalf("error connecting to target database: %v", err)
+	}
+	defer targetDB.Close()
+
+	if err = repo.EnsureStateTable(targetDB, config.Target, false); err != nil {
+		log.Fatalf("error ensuring state table: %v", err)
+	}
+
+	for _, sourceTable := range config.Source.Tables {
+		targetTable, err := config.Target.GetTargetTable(sourceTable.SourceName)
+		if err != nil {
+			log.Fatalf("error getting target table: %v", err)
+		}
+
+		if err = repo.InsertTable(sourceDB, targetDB, sourceTable, targetTable); err != nil {
+			log.Fatalf("error inserting %s -> %s: %v", sourceTable.Name, targetTable.Name, err)
+		}
+	}
+}
+
+func runUpdate(cmd *cobra.Command, args []string) {
+	config := loadConfig()
+
+	sourceDB, err := sql.Open(config.Source.Driver, config.Source.URL)
+	if err != nil {
+		log.Fatalf("error connecting to source database: %v", err)
+	}
+	defer sourceDB.Close()
+
+	targetDB, err := pgxpool.New(context.Background(), config.Target.URL)
+	if err != nil {
+		log.Fatalf("error connecting to target database: %v", err)
+	}
+	defer targetDB.Close()
+
+	if err = repo.EnsureStateTable(targetDB, config.Target, true); err != nil {
+		log.Fatalf("error ensuring state table: %v", err)
+	}
+
+	for _, sourceTable := range config.Source.Tables {
+		targetTable, err := config.Target.GetTargetTable(sourceTable.SourceName)
+		if err != nil {
+			log.Fatalf("error getting target table: %v", err)
+		}
+
+		if err = repo.UpdateTable(sourceDB, targetDB, sourceTable, targetTable); err != nil {
+			log.Fatalf("error updating %s -> %s: %v", sourceTable.Name, targetTable.Name, err)
+		}
+	}
+}
+
+func loadConfig() model.Config {
 	f, err := os.Open(configPath)
 	if err != nil {
 		log.Fatalf("error opening config file: %v", err)
@@ -68,35 +129,5 @@ func runInsert(cmd *cobra.Command, args []string) {
 	if err = yaml.NewDecoder(f).Decode(&c); err != nil {
 		log.Fatalf("error reading config file: %v", err)
 	}
-
-	sourceDB, err := sql.Open(c.Source.Driver, c.Source.URL)
-	if err != nil {
-		log.Fatalf("error connecting to source database: %v", err)
-	}
-	defer sourceDB.Close()
-
-	targetDB, err := pgxpool.New(context.Background(), c.Target.URL)
-	if err != nil {
-		log.Fatalf("error connecting to target database: %v", err)
-	}
-	defer targetDB.Close()
-
-	if err = repo.EnsureStateTable(targetDB, c.Target); err != nil {
-		log.Fatalf("error ensuring state table: %v", err)
-	}
-
-	for _, sourceTable := range c.Source.Tables {
-		targetTable, err := c.Target.GetTargetTable(sourceTable.SourceName)
-		if err != nil {
-			log.Fatalf("error getting target table: %v", err)
-		}
-
-		if err = repo.ShiftTable(sourceDB, targetDB, sourceTable, targetTable); err != nil {
-			log.Fatalf("error shifting %s -> %s: %v", sourceTable.Name, targetTable.Name, err)
-		}
-	}
-}
-
-func runUpdate(cmd *cobra.Command, args []string) {
-
+	return c
 }

@@ -10,7 +10,7 @@ import (
 
 // EnsureStateTable creates the state table and initialises it with zeros for
 // each of the migration tables.
-func EnsureStateTable(targetDB *pgxpool.Pool, d model.Database) error {
+func EnsureStateTable(targetDB *pgxpool.Pool, d model.Database, reset bool) error {
 	// Create table if it doesn't exist.
 	const tableStmt = `CREATE TABLE IF NOT EXISTS _shift_state (
 		"table_name" STRING PRIMARY KEY,
@@ -27,6 +27,15 @@ func EnsureStateTable(targetDB *pgxpool.Pool, d model.Database) error {
 
 		if _, err := targetDB.Exec(context.Background(), rowStmt, table.Name); err != nil {
 			return fmt.Errorf("initialising table state: %w", err)
+		}
+
+		if !reset {
+			continue
+		}
+
+		resetStmt := `UPDATE _shift_state SET current_offset = 0 WHERE true`
+		if _, err := targetDB.Exec(context.Background(), resetStmt); err != nil {
+			return fmt.Errorf("resetting table state: %w", err)
 		}
 	}
 
