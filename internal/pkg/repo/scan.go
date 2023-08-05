@@ -1,20 +1,25 @@
 package repo
 
 import (
-	"database/sql"
 	"ds/internal/pkg/model"
 	"fmt"
 )
 
+type rowScanner interface {
+	Columns() ([]string, error)
+	Next() bool
+	Scan(...any) error
+}
+
 // scan a row collection for a given table into a multi-dimensional array.
-func scan(list *sql.Rows, t model.Table) (model.Values, error) {
-	fields, err := list.Columns()
+func scan(rs rowScanner, t model.Table) (model.Values, error) {
+	fields, err := rs.Columns()
 	if err != nil {
 		return nil, fmt.Errorf("listing columns: %w", err)
 	}
 
 	var rows []map[string]any
-	for list.Next() {
+	for rs.Next() {
 		scans := make([]any, len(fields))
 		row := make(map[string]any)
 
@@ -22,7 +27,7 @@ func scan(list *sql.Rows, t model.Table) (model.Values, error) {
 			scans[i] = &scans[i]
 		}
 
-		if err = list.Scan(scans...); err != nil {
+		if err = rs.Scan(scans...); err != nil {
 			return nil, fmt.Errorf("scaning values: %w", err)
 		}
 
