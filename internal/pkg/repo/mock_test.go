@@ -15,7 +15,7 @@ func newMockRows(rows [][]any, columns []string) *mockRows {
 	}
 }
 
-func (m *mockRows) Scan(dest ...interface{}) error {
+func (m *mockRows) Scan(dest ...any) error {
 	if m.index >= len(m.rows) {
 		return sql.ErrNoRows
 	}

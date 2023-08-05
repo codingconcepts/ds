@@ -28,9 +28,9 @@ func TestScan(t *testing.T) {
 	}
 
 	exp := model.Values{
-		[]interface{}{1, "A", "2023-01-01", true},
-		[]interface{}{2, "B", "2023-01-02", false},
-		[]interface{}{3, "C", "2023-01-03", true},
+		[]any{1, "A", "2023-01-01", true},
+		[]any{2, "B", "2023-01-02", false},
+		[]any{3, "C", "2023-01-03", true},
 	}
 
 	act, err := scan(mockRows, table)
