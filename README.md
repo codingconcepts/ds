@@ -1,4 +1,7 @@
-# ds
+<p align="center">
+  <img src="assets/cover.png" alt="drawing" width="350"/>
+</p>
+
 Shift data between databases
 
 ### Installation

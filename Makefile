@@ -45,6 +45,13 @@ verify:
 		--source 'postgres://postgres:password@localhost:5432/postgres?sslmode=disable' \
 		--target 'postgresql://root@localhost:26257/defaultdb?sslmode=disable'
 
+test:
+	go test ./... -v -cover
+
+cover:
+	go test -v -coverpkg=./... -coverprofile=coverage.out ./... -count=1
+	go tool cover -html coverage.out
+
 release: validate_version
 	GOOS=linux go build -ldflags "-X main.version=${VERSION}" -o ds ;\
 	tar -zcvf ./releases/ds_${VERSION}_linux.tar.gz ./ds ;\

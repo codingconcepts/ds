@@ -35,12 +35,17 @@ type Table struct {
 func (t Table) SelectStatement(offset int) string {
 	columns := t.ColumnNames()
 
+	var limit string
+	if t.ReadLimit > 0 {
+		limit = fmt.Sprintf("LIMIT %d", t.ReadLimit)
+	}
+
 	return fmt.Sprintf(
-		"SELECT %s FROM %s %s LIMIT %d OFFSET %d",
-		strings.Join(columns, ","),
+		"SELECT %s FROM %s %s %s OFFSET %d",
+		strings.Join(columns, ", "),
 		t.Name,
 		t.Filter,
-		t.ReadLimit,
+		limit,
 		offset,
 	)
 }
@@ -64,7 +69,7 @@ func (t Table) UpsertStatement(sourceValues Values) (string, error) {
 		 SET %s
 		 WHERE _shift_t IS DISTINCT FROM EXCLUDED`,
 		t.Name,
-		strings.Join(colums, ","),
+		strings.Join(colums, ", "),
 		params,
 		t.PrimaryKey,
 		fieldsForSet,
@@ -82,7 +87,7 @@ func (t Table) fieldsForSetStatement() (string, error) {
 		sb.WriteString(fmt.Sprintf("%s = EXCLUDED.%s", col, col))
 
 		if i < len(columns)-1 {
-			sb.WriteString(",")
+			sb.WriteString(", ")
 		}
 	}
 

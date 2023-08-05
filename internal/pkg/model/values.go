@@ -27,14 +27,14 @@ func (v Values) ToParams() (string, error) {
 			argIdx += 1
 			sb.WriteString("$%d", argIdx)
 			if j < len(row)-1 {
-				sb.WriteString(",")
+				sb.WriteString(", ")
 			}
 		}
 
 		sb.WriteString(")")
 
 		if i < len(v)-1 {
-			sb.WriteString(",")
+			sb.WriteString(", ")
 		}
 	}
 

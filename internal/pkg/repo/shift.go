@@ -37,7 +37,7 @@ func InsertTable(sourceDB *sql.DB, targetDB *pgxpool.Pool, sourceTable, targetTa
 		}
 
 		// Write to output.
-		if _, err = targetDB.CopyFrom(context.Background(), pgx.Identifier{sourceTable.Name}, targetTable.ColumnNames(), pgx.CopyFromRows(values)); err != nil {
+		if _, err = targetDB.CopyFrom(context.Background(), pgx.Identifier{targetTable.Name}, targetTable.ColumnNames(), pgx.CopyFromRows(values)); err != nil {
 			return fmt.Errorf("inserting rows: %w", err)
 		}
 
