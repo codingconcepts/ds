@@ -48,8 +48,18 @@ verify:
 test:
 	go test ./... -v -cover
 
+integration_test:
+	INTEGRATION_TESTS=true \
+	SOURCE_URL="postgres://postgres:password@localhost:5432/postgres?sslmode=disable" \
+	TARGET_URL="postgresql://root@localhost:26257/defaultdb?sslmode=disable" \
+		$(MAKE) test
+
 cover:
-	go test -v -coverpkg=./... -coverprofile=coverage.out ./... -count=1
+	INTEGRATION_TESTS=true \
+	SOURCE_URL="postgres://postgres:password@localhost:5432/postgres?sslmode=disable" \
+	TARGET_URL="postgresql://root@localhost:26257/defaultdb?sslmode=disable" \
+		go test -v -coverpkg=./... -coverprofile=coverage.out ./... -count=1
+		
 	go tool cover -html coverage.out
 
 release: validate_version

@@ -85,6 +85,20 @@ ds update --config examples/basic/config.yaml
 make verify
 ```
 
+### Test
+
+Run unit tests with:
+``` sh
+make test
+```
+
+Run integration tests with:
+``` sh
+make postgres
+make cockroach
+make integration_test
+```
+
 ### Todos
 
 * Implement `delete` command to clear up missing rows
